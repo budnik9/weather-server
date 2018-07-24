@@ -1,5 +1,5 @@
 const favorites = require("./favorites");
 
-module.exports = (app) => {
+module.exports = app => {
     app.use("/favorites", favorites);
-}
+};

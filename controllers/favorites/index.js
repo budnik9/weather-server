@@ -4,17 +4,27 @@ const { REG_EXP_CITY_NAME } = require("../../constants/reg-exp");
 
 const favoritesService = new FavoritesService();
 
-const transformToCorrectForm = (city) => {
+const transformToCorrectForm = city => {
     const correctCityName = city[0].toUpperCase() + city.slice(1);
 
     return correctCityName.trim();
-}
+};
 
+/**
+ * Controller class 
+ */
 class FavoritesController {
-    constructor() {
-        
-    }
+    /**
+     * Return instance of a class
+     */
+    constructor() {}
 
+    /**
+     * Calls a service function addCity and send response
+     * @param {req} req 
+     * @param {res} res 
+     * @param {next} next 
+     */
     addCity(req, res, next) {
         const { city } = req.body;
         const correctCityName = transformToCorrectForm(city);
@@ -28,11 +38,18 @@ class FavoritesController {
         });
     }
 
+    /**
+     * Calls a service function removeCity and send response
+     * @param {req} req 
+     * @param {res} res 
+     * @param {next} next 
+     * @return {Object}
+     */
     removeCity(req, res, next) {
         const { city } = req.body;
         const correctCityName = transformToCorrectForm(city);
 
-        if(!favoritesService.hasCity(correctCityName)){
+        if (!favoritesService.hasCity(correctCityName)) {
             return res.status(statusCodes.BAD_REQUEST).json({
                 message: "This city is hasn't in favorites",
                 error: "bad request",
@@ -49,6 +66,12 @@ class FavoritesController {
         });
     }
 
+    /**
+     * Calls a service function getCities and send response
+     * @param {req} req 
+     * @param {res} res 
+     * @param {next} next 
+     */
     getCities(req, res, next) {
         const cities = favoritesService.getCities();
 
@@ -59,11 +82,18 @@ class FavoritesController {
         });
     }
 
+    /**
+     * Check city name
+     * @param {req} req 
+     * @param {res} res 
+     * @param {next} next
+     * @return {Object} 
+     */
     isValid(req, res, next) {
         const { city } = req.body;
         const correctCityName = transformToCorrectForm(city);
 
-        if(favoritesService.hasCity(correctCityName)){
+        if (favoritesService.hasCity(correctCityName)) {
             return res.status(statusCodes.BAD_REQUEST).json({
                 message: "This city is has in favorites",
                 error: "bad request",
@@ -71,7 +101,7 @@ class FavoritesController {
             });
         }
 
-        if(!REG_EXP_CITY_NAME.test(correctCityName)) {
+        if (!REG_EXP_CITY_NAME.test(correctCityName)) {
             return res.status(statusCodes.BAD_REQUEST).json({
                 message: "invalid city name",
                 error: "invalid city name",
@@ -79,10 +109,6 @@ class FavoritesController {
             });
         }
 
-        next();
-    }
-
-    clear(req, res, next) {
         next();
     }
 }
