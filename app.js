@@ -9,6 +9,8 @@ const statusCodes = require("./constants/http-status-codes");
 
 const app = express();
 
+require("./models/connection");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());

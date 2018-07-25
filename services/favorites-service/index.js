@@ -1,3 +1,5 @@
+const models = require("../../models");
+
 /**
  *
  */
@@ -6,7 +8,7 @@ class FavoritesService {
      * Return instance of a class
      */
     constructor() {
-        this.favoriteCities = require("../../data/favorite-cities");
+        this.Favorites = models.Favorites;
     }
 
     /**
@@ -14,8 +16,11 @@ class FavoritesService {
      * @param {String} city The city
      * @return {void}
      */
-    addCity(city) {
-        this.favoriteCities.push(city);
+    async addCity(city) {
+        const item = new this.Favorites({ city });
+        const savedItem = await item.save();
+
+        return savedItem.city;
     }
 
     /**
@@ -23,16 +28,26 @@ class FavoritesService {
      * @param {String} city
      * @return {void}
      */
-    removeCity(city) {
-        this.favoriteCities.splice(this.favoriteCities.indexOf(city), 1);
+    async removeCity(city) {
+        try {
+            await this.Favorites.deleteOne({ city });
+
+            return true;
+        } catch (err) {
+            console.log(err);
+
+            return false;
+        }
     }
 
     /**
      * Returns all favorite cities
      * @return {Array}
      */
-    getCities() {
-        return this.favoriteCities;
+    async getCities() {
+        const items = await this.Favorites.find().exec();
+
+        return items.map(item => item.city);
     }
 
     /**
@@ -40,8 +55,10 @@ class FavoritesService {
      * @param {String} city
      * @return {Boolean}
      */
-    hasCity(city) {
-        return this.favoriteCities.includes(city);
+    async hasCity(city) {
+        const item = await this.Favorites.findOne({ city }).exec();
+
+        return  item ? item.city : Promise.reject(false);
     }
 }
 
